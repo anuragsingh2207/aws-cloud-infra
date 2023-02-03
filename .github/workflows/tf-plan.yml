@@ -1,0 +1,99 @@
+name: Terraform Plan
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  terraform_format_check:
+    name: Terraform Format Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code  '${{ github.ref }}'
+        uses: actions/checkout@v3
+      
+      - name: Setup Terraform 
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Run Terraform Format Check 
+        id: fmt
+        run: terraform fmt -check -recursive
+       
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
+  terraform_plan_dev:
+    name: Terraform Plan Dev
+    needs: terraform_format_check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code  '${{ github.ref }}'
+        uses: actions/checkout@v3
+      
+      - name: Setup Terraform 
+        uses: hashicorp/setup-terraform@v2
+   
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate 
+
+      - name: Terraform Plan
+        id: plan
+        run: |
+          cd /environments/dev
+          terraform plan 
+       
+  terraform_plan_test:
+    name: Terraform Plan Dev
+    needs: terraform_format_check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code  '${{ github.ref }}'
+        uses: actions/checkout@v3
+      
+      - name: Setup Terraform 
+        uses: hashicorp/setup-terraform@v2
+   
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate 
+
+      - name: Terraform Plan
+        id: plan
+        run: |
+          cd /environments/dev
+          terraform plan  
+
+
+  terraform_plan_stage:
+    name: Terraform Plan Dev
+    needs: terraform_format_check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code  '${{ github.ref }}'
+        uses: actions/checkout@v3
+      
+      - name: Setup Terraform 
+        uses: hashicorp/setup-terraform@v2
+   
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate 
+
+      - name: Terraform Plan
+        id: plan
+        run: |
+          cd /environments/dev
+          terraform plan  
+      
+
+  
