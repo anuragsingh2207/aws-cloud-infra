@@ -1,0 +1,82 @@
+name: Terraform Apply
+on:
+  workflow_dispatch:
+    inputs:
+      env:
+        type: choice
+        description: Select Environment
+        required: true
+        options: 
+        - develop
+        - test
+        - stage
+        - production
+
+
+jobs:
+  terraform_apply:
+    name: Terraform Apply
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code  '${{ github.ref }}'
+        uses: actions/checkout@v3
+      
+      - name: Setup Terraform 
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Configure AWS Credentials Develop
+        if: github.event.inputs.env == develop
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_D }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_D }}
+          aws-region: us-east-1
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME_D }}
+
+      - name: Configure AWS Credentials Test
+        if: github.event.inputs.env == test
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_T }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_T }}
+          aws-region: us-east-1
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME_T }}
+
+      - name: Configure AWS Credentials Stage
+        if: github.event.inputs.env == stage
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_S }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_S }}
+          aws-region: us-east-1
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME_S }}
+
+      - name: Configure AWS Credentials Production
+        if: github.event.inputs.env == production
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_P }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_P }}
+          aws-region: us-east-1
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME_P }}
+   
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate 
+
+      - name: Terraform Plan
+        id: plan
+        run: |
+          cd /environments/${{github.event.inputs.env}}
+          terraform plan -out tfplan
+
+      - name: Terraform Apply
+        id: plan
+        run: |
+          cd /environments/${{github.event.inputs.env}}
+          terraform apply tfplan
+       
+  
