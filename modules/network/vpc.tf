@@ -12,7 +12,7 @@ module "vpc" {
   enable_vpn_gateway = flase
 
   tags = {
-    Terraform = "true"
+    Terraform   = "true"
     Environment = "dev"
   }
 }
