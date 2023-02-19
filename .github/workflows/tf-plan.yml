@@ -48,7 +48,7 @@ jobs:
       - name: Terraform Plan
         id: plan
         run: |
-          cd /environments/dev
+          cd environments/dev
           terraform plan 
        
   terraform_plan_test:
@@ -80,7 +80,7 @@ jobs:
       - name: Terraform Plan
         id: plan
         run: |
-          cd /environments/dev
+          cd environments/dev
           terraform plan  
 
   terraform_plan_stage:
@@ -120,7 +120,7 @@ jobs:
       - name: Terraform Plan
         id: plan
         run: |
-          cd /environments/dev
+          cd environments/dev
           terraform plan  
 
   terraform_plan_production:
@@ -152,7 +152,7 @@ jobs:
       - name: Terraform Plan
         id: plan
         run: |
-          cd /environments/${{github.event.inputs.env}}
+          cd environments/${{github.event.inputs.env}}
           terraform plan      
 
   
